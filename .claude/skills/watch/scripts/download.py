@@ -7,6 +7,7 @@ transcribe.py can parse them without needing Whisper.
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -83,6 +84,11 @@ def download_url(url: str, out_dir: Path) -> dict:
         "--",
         url,
     ]
+
+    # Optional: Netscape-format cookies file for sites that demand sign-in / bot checks.
+    cookies = os.environ.get("WATCH_COOKIES_FILE")
+    if cookies and Path(cookies).is_file():
+        cmd[1:1] = ["--cookies", cookies]
 
     # yt-dlp may exit non-zero if a subtitle variant fails (e.g. 429) even when
     # the video itself downloaded fine. Treat "video file present" as success.
